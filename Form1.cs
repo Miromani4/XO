@@ -21,17 +21,14 @@ namespace Server
     public partial class Form1 : Form
     {
         private string hod;
-        
+        public string[] massive = new string[11];
 
         class s_data
         {
             public string cord_x { get; set; }
             public string cord_y { get; set; }
             public string locked { get; set; }
-        }
-
-        class msg
-        {
+            public string next { get; set; }
             public string id { get; set; }
             public string mes { get; set; }
         }
@@ -160,51 +157,82 @@ namespace Server
 
         public void JSON_parser_Receive(string messages_t)
         {
+            listBox1.Items.Add(messages_t);
             var personObject = JsonSerializer.Deserialize<s_data>(messages_t);
-            var mesobj = JsonSerializer.Deserialize<msg>(messages_t);
+            
             if ((personObject.cord_x != null) & (personObject.cord_y != null))
             {
                 listBox1.Items.Add("cord_x: " + personObject.cord_x + " cord_y: " + personObject.cord_y);
-                xod_pro(personObject.cord_x, personObject.cord_y);
+                xod_pro(personObject.cord_x, personObject.cord_y, personObject.next);
             }
-            if (mesobj.id != null)
+            if (personObject.id != null)
             {
-                listBox1.Items.Add(mesobj.id + ": " + mesobj.mes);
-                //SendMessage("{\"mesg\":[{\"id\":\"" + textBox1.Text + "\",\"mes\":\"" + textBox2.Text + "\"}]}");
+                listBox1.Items.Add(personObject.id + ": " + personObject.mes);
             }
             if (personObject.locked != null)
             {     
-               listBox1.Items.Add(personObject.locked);
+               
                 if (personObject.locked == "x")
                 { 
-                    pictureBox11.Image = Properties.Resources.x as Bitmap;
+                    pictureBox11.BackgroundImage = Properties.Resources.x as Bitmap;
                     hod = "x";
                 }
                 if (personObject.locked == "0")
                 {
-                    pictureBox11.Image = Properties.Resources._0 as Bitmap;
+                    pictureBox11.BackgroundImage = Properties.Resources._0 as Bitmap;
                     hod = "0";
-                }
+                    for (int i = 2; i < 11; i++)
+                    {
+                        ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
+                    }
+                }                
             }
-        }
 
-        public void xod_pro(string pic, string ox)
+        }
+        //приём хода противника
+        public void xod_pro(string pic, string ox, string next)
         {      
                 if (ox == "x")
                 {
                     ((PictureBox)this.Controls[pic]).BackgroundImage = Properties.Resources.x as Bitmap;
-                
-                }
+                    ((PictureBox)this.Controls[pic]).Enabled = false;
+            }
                 if (ox == "0")
                 {
                 ((PictureBox)this.Controls[pic]).BackgroundImage = Properties.Resources._0 as Bitmap;
+                ((PictureBox)this.Controls[pic]).Enabled = false;
             }
-            
-        }
 
-        private void button3_Click(object sender, EventArgs e) {
-           // SendMessage(textBox2.Text);
-            SendMessage("{\"id\":\"" + textBox1.Text + "\",\"mes\":\"" + textBox2.Text + "\"}");
+            if (next == hod)
+            {
+                for (int i = 2; i < 11; i++)
+                {
+                    //massive[i] = Convert.ToString(((PictureBox)this.Controls[pic]).Name);
+                   // ((PictureBox)this.Controls["PictureBox" + i]).Enabled = true;
+                    //listBox1.Items.Add(massive[i]);
+                }
+                for (int i = 2; i < 11; i++)
+                {
+                    if (pic == Convert.ToString(((PictureBox)this.Controls["PictureBox" + i]).Name))
+                    {
+                        
+                        massive[i] = Convert.ToString(((PictureBox)this.Controls[pic]).Name);
+                        ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
+                        listBox1.Items.Add(massive[i]+" : "+ hod);
+                    }
+                    if (massive[i] == null) {
+                        //listBox1.Items.Add(massive[i]);
+                        ((PictureBox)this.Controls["PictureBox" + i]).Enabled = true;
+                    }
+                }
+            }
+        }
+        
+        //отправка сообщений в чат
+        private void button3_Click(object sender, EventArgs e) 
+        {
+           SendMessage("{\"id\":\"" + textBox1.Text + "\",\"mes\": \"" + textBox2.Text + "\"}");
+            listBox1.Items.Add(textBox1.Text + ": " + textBox2.Text);   
         }
         //реакция движения мыши
         private void pictureBox2_MouseMove_1(object sender, MouseEventArgs e)
@@ -241,13 +269,17 @@ namespace Server
                         hod = "x";
                         pictureBox11.BackgroundImage = Properties.Resources.x as Bitmap;
                         SendMessage("{\"locked\":\"0\",\"id\":\"" + textBox1.Text + "\",\"mes\":\"Вы играете 0\"}");
-                        
+
                     }
-                    else {
-                        hod = "0";
+                    else {                       
+                      hod = "0";
                         pictureBox11.BackgroundImage = Properties.Resources._0 as Bitmap;
                         SendMessage("{\"locked\":\"x\",\"id\":\"" + textBox1.Text + "\",\"mes\":\"Вы играете x\"}");
-                    }
+                        for (int i = 2; i < 11; i++)
+                        {                            
+                            ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
+                        }
+                        }
                 }
             }
 
@@ -267,16 +299,29 @@ namespace Server
             ((PictureBox)sender).Enabled = false;
             if (hod == "x")
             {
-                var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"mesg\":[{\"id\":\"\",\"mes\":\"\"}]}";
+                var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"next\":\"0\"}";
                 SendMessage(jsonPerson);
                 //hod = "0";
             } else
             {
-                var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"mesg\":[{\"id\":\"\",\"mes\":\"\"}]}";
+                var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"next\":\"x\"}";
                 SendMessage(jsonPerson);
                // hod = "x";
             }
+            for (int i = 2; i < 11; i++)
+                    {
+                string pic = "pictureBox" + i;
+                if (pic == Convert.ToString(((PictureBox)sender).Name))
+                {
+                    massive[i] = Convert.ToString(((PictureBox)this.Controls["PictureBox" + i]).Name);
+                    ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
+                    listBox1.Items.Add(massive[i] + " : " + hod);
+                }
+                            ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;                        
+                    }
         }
+
+        
 
         private void button7_Click(object sender, EventArgs e)
         {

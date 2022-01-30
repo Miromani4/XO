@@ -139,6 +139,7 @@
             // 
             // pictureBox11
             // 
+            this.pictureBox11.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox11, "pictureBox11");
             this.pictureBox11.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.pictureBox11.Name = "pictureBox11";
@@ -146,6 +147,7 @@
             // 
             // pictureBox10
             // 
+            this.pictureBox10.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox10, "pictureBox10");
             this.pictureBox10.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox10.Name = "pictureBox10";
@@ -156,6 +158,7 @@
             // 
             // pictureBox9
             // 
+            this.pictureBox9.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox9, "pictureBox9");
             this.pictureBox9.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox9.Name = "pictureBox9";
@@ -166,6 +169,7 @@
             // 
             // pictureBox8
             // 
+            this.pictureBox8.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox8, "pictureBox8");
             this.pictureBox8.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox8.Name = "pictureBox8";
@@ -176,6 +180,7 @@
             // 
             // pictureBox7
             // 
+            this.pictureBox7.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox7, "pictureBox7");
             this.pictureBox7.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox7.Name = "pictureBox7";
@@ -186,6 +191,7 @@
             // 
             // pictureBox6
             // 
+            this.pictureBox6.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox6, "pictureBox6");
             this.pictureBox6.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox6.Name = "pictureBox6";
@@ -196,6 +202,7 @@
             // 
             // pictureBox5
             // 
+            this.pictureBox5.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox5, "pictureBox5");
             this.pictureBox5.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox5.Name = "pictureBox5";
@@ -206,6 +213,7 @@
             // 
             // pictureBox4
             // 
+            this.pictureBox4.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox4, "pictureBox4");
             this.pictureBox4.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox4.Name = "pictureBox4";
@@ -216,6 +224,7 @@
             // 
             // pictureBox3
             // 
+            this.pictureBox3.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox3, "pictureBox3");
             this.pictureBox3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox3.Name = "pictureBox3";
@@ -226,6 +235,7 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.BackgroundImage = global::Server.Properties.Resources.trans;
             resources.ApplyResources(this.pictureBox2, "pictureBox2");
             this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox2.Name = "pictureBox2";

@@ -30,7 +30,7 @@ namespace ChatServer
                 string message = GetMessage();
                 userName = message;
 
-                message = "{\"mesg\":[{\"id\":\"" + userName + "\",\"mes\":\"Присоединился\"}]}";
+                message = "{\"id\":\"" + userName + "\",\"mes\":\"Присоединился\"}";
                 
                 // посылаем сообщение о входе в чат всем подключенным пользователям
                 server.BroadcastMessage(message, this.Id);
@@ -48,7 +48,7 @@ namespace ChatServer
                     }
                     catch
                     {
-                        message = String.Format("{0}: покинул чат", userName);
+                        message = "{\"id\":\"" + userName + "\",\"mes\":\"Отключился\"}";
                         Console.WriteLine(message);
                         server.BroadcastMessage(message, this.Id);
                         break;
