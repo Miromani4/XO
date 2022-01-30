@@ -69,44 +69,52 @@ namespace Server
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
-            userName = textBox1.Text;
-            client = new TcpClient();
-
-            if (textBox3.Text == "ip адрес")
+            if (textBox1.Text == "Имя")
             {
-                host = "127.0.0.1";
+                MessageBox.Show("Имя не может быть пустым");
             }
             else
             {
-                host = textBox3.Text;
-            }
-            try
-            {
-                client.Connect(host, port); //подключение клиента
-                stream = client.GetStream(); // получаем поток
+                userName = textBox1.Text;
+                client = new TcpClient();
 
-                string message = userName;
-                byte[] data = Encoding.Unicode.GetBytes(message);
-                stream.Write(data, 0, data.Length);
+                if (textBox3.Text == "ip адрес")
+                {
+                    host = "127.0.0.1";
+                }
+                else
+                {
+                    host = textBox3.Text;
+                }
+                try
+                {
+                    client.Connect(host, port); //подключение клиента
+                    stream = client.GetStream(); // получаем поток
 
-                // запускаем новый поток для получения данных
-                Thread receiveThread = new Thread(new ThreadStart(ReceiveMessage));
-                receiveThread.IsBackground = true;
-                receiveThread.Start(); //старт потока
-                listBox1.Items.Add("Добро пожаловать:" + userName);
-                clear_inactive_desk(true);
-                
-                //SendMessage();
-            }
-            catch (Exception ex)
-            {
-                listBox1.Items.Add(ex.Message);
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-              //  Disconnect();
+                    string message = userName;
+                    byte[] data = Encoding.Unicode.GetBytes(message);
+                    stream.Write(data, 0, data.Length);
+
+                    // запускаем новый поток для получения данных
+                    Thread receiveThread = new Thread(new ThreadStart(ReceiveMessage));
+                    receiveThread.IsBackground = true;
+                    receiveThread.Start(); //старт потока
+                    listBox1.Items.Add("Добро пожаловать:" + userName);
+                    clear_inactive_desk(true);
+                    button7.Enabled = true;
+                    button3.Enabled = true;
+                    button5.Enabled = true;
+                    //SendMessage();
+                }
+                catch (Exception ex)
+                {
+                    listBox1.Items.Add(ex.Message);
+                    
+                }
+                finally
+                {
+                    //  Disconnect();
+                }
             }
         }
         //отправка сообщения
@@ -157,21 +165,31 @@ namespace Server
 
         public void JSON_parser_Receive(string messages_t)
         {
-            listBox1.Items.Add(messages_t);
+           // listBox1.Items.Add(messages_t);
             var personObject = JsonSerializer.Deserialize<s_data>(messages_t);
             
             if ((personObject.cord_x != null) & (personObject.cord_y != null))
             {
-                listBox1.Items.Add("cord_x: " + personObject.cord_x + " cord_y: " + personObject.cord_y);
+                //listBox1.Items.Add("cord_x: " + personObject.cord_x + " cord_y: " + personObject.cord_y);
                 xod_pro(personObject.cord_x, personObject.cord_y, personObject.next);
             }
-            if (personObject.id != null)
-            {
+            if (personObject.mes != null)
+            { 
                 listBox1.Items.Add(personObject.id + ": " + personObject.mes);
             }
+                       
             if (personObject.locked != null)
-            {     
-               
+            {
+                if (personObject.locked == "r") restart();
+                if (personObject.locked == "w")
+                {
+                    if (hod == "x") MessageBox.Show("Выйграли: X");
+                    if (hod == "0") MessageBox.Show("Выйграли: 0");
+                    for (int i = 2; i < 11; i++)
+                    {
+                        ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
+                    }
+                }
                 if (personObject.locked == "x")
                 { 
                     pictureBox11.BackgroundImage = Properties.Resources.x as Bitmap;
@@ -211,22 +229,22 @@ namespace Server
                     {
                         
                         massive[i] = ox;
-                        ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
-                        listBox1.Items.Add(i +" : "+ massive[i]);
+                        ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;                       
                     }
-                    if (massive[i] == null) {
-                        //listBox1.Items.Add(massive[i]);
+                    if (massive[i] == null) {                        
                         ((PictureBox)this.Controls["PictureBox" + i]).Enabled = true;
                     }
                 }
             }
+            check_step(hod);
         }
         
         //отправка сообщений в чат
         private void button3_Click(object sender, EventArgs e) 
         {
            SendMessage("{\"id\":\"" + textBox1.Text + "\",\"mes\": \"" + textBox2.Text + "\"}");
-            listBox1.Items.Add(textBox1.Text + ": " + textBox2.Text);   
+            listBox1.Items.Add(textBox1.Text + ": " + textBox2.Text);
+            clear_text();
         }
         //реакция движения мыши
         private void pictureBox2_MouseMove_1(object sender, MouseEventArgs e)
@@ -278,17 +296,53 @@ namespace Server
             }
 
         }
-
-        private void button6_Click(object sender, EventArgs e)
+        public bool check_step(string chek)
         {
-            for (int i = 2; i < 11; i++) 
+            if (check_win())
             {
-                if (massive[i] != null)
+                if (hod == "x")
                 {
-                    listBox1.Items.Add(i+" : " +massive[i]);
+                    MessageBox.Show("Выйграли: 0");
+                    SendMessage("{\"locked\":\"w\",\"id\":\"" + textBox1.Text + "\",\"mes\":\"Выйграли: 0\"}");
+                }
+                if (hod == "0")
+                {
+                    MessageBox.Show("Выйграли: X");
+                    SendMessage("{\"locked\":\"w\",\"id\":\"" + textBox1.Text + "\",\"mes\":\"Выйграли: X\"}");
+                }
+
+            }
+            else
+            {
+                for (int i = 2; i < 11; i++)
+                {
+                    if (massive[i] == null)
+                    {
+                        return true;
+                    }                    
                 }
             }
+            
+            return false;
         }
+        
+
+        public bool check_win() //проверяем на выйгрышные комбинации
+        {
+            if ((massive[2] == "x" & massive[3] == "x" & massive[4] == "x") || (massive[2] == "0" & massive[3] == "0" & massive[4] == "0") ||
+                (massive[5] == "x" & massive[6] == "x" & massive[7] == "x") || (massive[5] == "0" & massive[6] == "0" & massive[7] == "0") ||
+                (massive[8] == "x" & massive[9] == "x" & massive[10] == "x") || (massive[8] == "0" & massive[9] == "0" & massive[10] == "0") ||
+                (massive[2] == "x" & massive[5] == "x" & massive[8] == "x") || (massive[2] == "0" & massive[5] == "0" & massive[8] == "0") ||
+                (massive[3] == "x" & massive[6] == "x" & massive[9] == "x") || (massive[3] == "0" & massive[6] == "0" & massive[9] == "0") ||
+                (massive[4] == "x" & massive[7] == "x" & massive[10] == "x") || (massive[4] == "0" & massive[7] == "0" & massive[10] == "0") ||
+                (massive[2] == "x" & massive[6] == "x" & massive[10] == "x") || (massive[2] == "0" & massive[6] == "0" & massive[10] == "0") ||
+                (massive[4] == "x" & massive[6] == "x" & massive[8] == "x") || (massive[4] == "0" & massive[6] == "0" & massive[8] == "0"))
+            {                
+                return true;
+            }
+            return false;
+        }
+
         //реакция моус клик всех пикчабоксов
         private void hod_select(object sender, MouseEventArgs e)
         {
@@ -301,11 +355,13 @@ namespace Server
                 var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"next\":\"0\"}";
                 SendMessage(jsonPerson);
                 //hod = "0";
+                check_step("x");
             } else
             {
                 var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"next\":\"x\"}";
                 SendMessage(jsonPerson);
-               // hod = "x";
+                // hod = "x";
+                check_step("0");
             }
             for (int i = 2; i < 11; i++)
                     {
@@ -314,10 +370,11 @@ namespace Server
                 {
                     massive[i] = hod;
                     ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
-                    listBox1.Items.Add(i + " : " + massive[i]);
                 }
-                            ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;                        
-                    }
+                            ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
+                   
+                }
+            
         }
 
         
@@ -325,6 +382,13 @@ namespace Server
         private void button7_Click(object sender, EventArgs e)
         {
             clear_inactive_desk(true);
+            massive = new string[11];
+            SendMessage("{\"locked\":\"r\",\"id\":\"" + textBox1.Text + "\",\"mes\":\"перезапуск\"}");
+        }
+        private void restart()
+        {
+            clear_inactive_desk(true);
+            massive = new string[11];
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -359,6 +423,32 @@ namespace Server
                     c.Image = Properties.Resources.trans as Bitmap;
                 }
             pictureBox1.BackgroundImage = Properties.Resources.desk1 as Bitmap;
+        }
+
+        private void textBox2_Enter(object sender, EventArgs e)
+        {
+            if (textBox2.Text == "Сообщение")
+            {
+                textBox2.Text = "";
+                textBox2.ForeColor = Color.Black;
+            }
+        }
+
+        private void textBox2_Leave(object sender, EventArgs e)
+        {
+            if (textBox2.Text == "")
+            {
+                textBox2.Text = "Сообщение";
+                textBox2.ForeColor = Color.Silver;
+            }
+        }
+        private void clear_text()
+        {
+            if (textBox2.Text == "")
+            {
+                textBox2.Text = "Сообщение";
+                textBox2.ForeColor = Color.Silver;
+            }
         }
     }
 }
