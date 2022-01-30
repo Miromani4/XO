@@ -202,23 +202,17 @@ namespace Server
                 ((PictureBox)this.Controls[pic]).BackgroundImage = Properties.Resources._0 as Bitmap;
                 ((PictureBox)this.Controls[pic]).Enabled = false;
             }
-
+             
             if (next == hod)
-            {
-                for (int i = 2; i < 11; i++)
-                {
-                    //massive[i] = Convert.ToString(((PictureBox)this.Controls[pic]).Name);
-                   // ((PictureBox)this.Controls["PictureBox" + i]).Enabled = true;
-                    //listBox1.Items.Add(massive[i]);
-                }
+            {                
                 for (int i = 2; i < 11; i++)
                 {
                     if (pic == Convert.ToString(((PictureBox)this.Controls["PictureBox" + i]).Name))
                     {
                         
-                        massive[i] = Convert.ToString(((PictureBox)this.Controls[pic]).Name);
+                        massive[i] = ox;
                         ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
-                        listBox1.Items.Add(massive[i]+" : "+ hod);
+                        listBox1.Items.Add(i +" : "+ massive[i]);
                     }
                     if (massive[i] == null) {
                         //listBox1.Items.Add(massive[i]);
@@ -287,8 +281,13 @@ namespace Server
 
         private void button6_Click(object sender, EventArgs e)
         {
-            pictureBox11.Image = Properties.Resources._0 as Bitmap;
-            hod = "0";
+            for (int i = 2; i < 11; i++) 
+            {
+                if (massive[i] != null)
+                {
+                    listBox1.Items.Add(i+" : " +massive[i]);
+                }
+            }
         }
         //реакция моус клик всех пикчабоксов
         private void hod_select(object sender, MouseEventArgs e)
@@ -313,9 +312,9 @@ namespace Server
                 string pic = "pictureBox" + i;
                 if (pic == Convert.ToString(((PictureBox)sender).Name))
                 {
-                    massive[i] = Convert.ToString(((PictureBox)this.Controls["PictureBox" + i]).Name);
+                    massive[i] = hod;
                     ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;
-                    listBox1.Items.Add(massive[i] + " : " + hod);
+                    listBox1.Items.Add(i + " : " + massive[i]);
                 }
                             ((PictureBox)this.Controls["PictureBox" + i]).Enabled = false;                        
                     }
