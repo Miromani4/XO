@@ -40,9 +40,7 @@ namespace ChatServer
                 {
                     try
                     {
-                        message = GetMessage();
-                        //message = String.Format("{0}: {1}", userName, message);
-                        //Console.WriteLine(message);
+                        message = GetMessage();;
                         server.BroadcastMessage(message, this.Id);
                         
                     }

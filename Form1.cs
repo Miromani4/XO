@@ -103,8 +103,7 @@ namespace Server
                     clear_inactive_desk(true);
                     button7.Enabled = true;
                     button3.Enabled = true;
-                    button5.Enabled = true;
-                    //SendMessage();
+                    button5.Enabled = true;                    
                 }
                 catch (Exception ex)
                 {
@@ -162,22 +161,18 @@ namespace Server
             Environment.Exit(0); //завершение процесса
         }
 
-
+        //парсинг JSON сообщений
         public void JSON_parser_Receive(string messages_t)
-        {
-           // listBox1.Items.Add(messages_t);
-            var personObject = JsonSerializer.Deserialize<s_data>(messages_t);
-            
+        {           
+            var personObject = JsonSerializer.Deserialize<s_data>(messages_t);            
             if ((personObject.cord_x != null) & (personObject.cord_y != null))
-            {
-                //listBox1.Items.Add("cord_x: " + personObject.cord_x + " cord_y: " + personObject.cord_y);
+            {                
                 xod_pro(personObject.cord_x, personObject.cord_y, personObject.next);
             }
             if (personObject.mes != null)
             { 
                 listBox1.Items.Add(personObject.id + ": " + personObject.mes);
-            }
-                       
+            }                       
             if (personObject.locked != null)
             {
                 if (personObject.locked == "r") restart();
@@ -353,14 +348,12 @@ namespace Server
             if (hod == "x")
             {
                 var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"next\":\"0\"}";
-                SendMessage(jsonPerson);
-                //hod = "0";
+                SendMessage(jsonPerson);                
                 check_step("x");
             } else
             {
                 var jsonPerson = "{\"cord_x\":\"" + Convert.ToString(((PictureBox)sender).Name) + "\",\"cord_y\":\"" + hod + "\",\"next\":\"x\"}";
-                SendMessage(jsonPerson);
-                // hod = "x";
+                SendMessage(jsonPerson);                
                 check_step("0");
             }
             for (int i = 2; i < 11; i++)
